@@ -1,19 +1,24 @@
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <locale.h>
+#include <stdbool.h>
+
 
 #define TAM1 10                                     // Define o tamanho do primeiro vetor;
 #define TAM2 100                                    // Define o tamanho do segundo vetor;
 #define TAM3 1000                                   // Define o tamanho do terceiro vetor;
 #define TAM4 10000                                  // Define o tamanho do quarto vetor;
 
+
+void getRuntime(bool t);
 void submenu(int opcao, int *vet, int tam, char *nome); // Função que exibe um submenu de opções
 void menu();                                        // Função que exibe um menu de opções
 void verify_alg(int alg);                           // Função que verifica qual o Algoritmo de Ordenação;
-void show(int *vet, int tam, int tp, char *nome,int alg, int trocas,clock_t *tempo_exec); // Função que exibe os vetores;
+void show(int *vet, int tam, int tp, char *nome,int alg, int trocas); // Função que exibe os vetores;
 void fill_array(int *vet, int tam, int tp);         // Função que preenche os vetores com números em Ordem Crescente ou Decrescente ou Aleatória;
-void sort_algorithms(int *vet, int tam, int i, char *nome, clock_t *tempo_exec);// Função que agrupa todas as funções de ordenação;
+void sort_algorithms(int *vet, int tam, int i, char *nome);// Função que agrupa todas as funções de ordenação;
+
+
 
 // Algoritmos de Ordenação Simples
 void insertion_sort(int *vet, int tam, int *trocas);    // Função de Ordenação *InsertionSort*;
@@ -30,17 +35,44 @@ void array_rand(int *vet, int tam);                // Função que Retorna um Ve
 
 int main()
 {         
-    setlocale(LC_ALL, "");
+    
     
     menu();
+    
+
+    
+    
 
     return 0;
 }
 
 
+
+void getRuntime(bool t)
+{
+    clock_t start_t, end_t;
+    
+    
+    if(t == false)
+    start_t = 0;
+    start_t = clock();
+    end_t = 0;
+
+    if(t == true){
+    end_t = 0;
+    end_t = clock();
+    double total_t = (double) (end_t - start_t)/1000000;
+
+    printf("Tempo total: %f s \n", total_t );
+    
+    total_t = 0;
+    
+    }
+}
+
 void submenu(int opcao, int *vet, int tam, char *nome)
 {
-        clock_t tempo_exec;
+        
         if(opcao == 1) opcao = 10;
         if(opcao == 2) opcao = 100;
         if(opcao == 3) opcao = 1000;
@@ -63,17 +95,17 @@ void submenu(int opcao, int *vet, int tam, char *nome)
         switch (opcao)
         {
         case 1:
-            sort_algorithms(vet,tam, opcao,nome,&tempo_exec);
+            sort_algorithms(vet,tam, opcao,nome);
             break;
         case 2:
-            sort_algorithms(vet,tam, opcao,nome,&tempo_exec);
+            sort_algorithms(vet,tam, opcao,nome);
             break;
         case 3:
-            sort_algorithms(vet,tam, opcao,nome,&tempo_exec);
+            sort_algorithms(vet,tam, opcao,nome);
             break;
         case 4:
             for(int i=1; i <= 3;i++)
-                sort_algorithms(vet,tam, i,nome,&tempo_exec);
+                sort_algorithms(vet,tam, i,nome);
             break;
         default:
             break;
@@ -160,10 +192,8 @@ void verify_alg(int alg)
     }
 }
 
-void show(int *vet, int tam, int tp, char nome[27], int alg, int trocas,clock_t *tempo_exec)
+void show(int *vet, int tam, int tp, char nome[27], int alg, int trocas)
 {
-
-    float tmp= (float) *tempo_exec;
     puts("------------------------------");
     for (int i = 0; i < tam; i++)
     {
@@ -175,15 +205,15 @@ void show(int *vet, int tam, int tp, char nome[27], int alg, int trocas,clock_t 
     switch (tp)
     {
     case 1:
-        printf("%s - Ordem Crescente - Num de Trocas: %d - Tempo Exec.: %f ms",nome, trocas,tmp/CLOCKS_PER_SEC );
+        printf("%s - Ordem Crescente - Num de Trocas: %d ",nome, trocas);
         puts("");
         break;
     case 2:
-        printf("%s - Ordem Decrescente - Num de Trocas: %d - Tempo Exec.: %f ms",nome, trocas,tmp/CLOCKS_PER_SEC );
+        printf("%s - Ordem Decrescente - Num de Trocas: %d ",nome, trocas );
         puts("");
         break;
     case 3:
-        printf("%s - Ordem Aleatoria - Num de Trocas: %d - Tempo Exec.: %f ms",nome, trocas,tmp/CLOCKS_PER_SEC );
+        printf("%s - Ordem Aleatoria - Num de Trocas: %d ",nome, trocas );
         puts("");
         break;
     default:
@@ -210,7 +240,7 @@ void fill_array(int *vet, int tam, int tp)
         break;
     }
 }
-void sort_algorithms(int *vet, int tam, int i, char *nome, clock_t *tempo_exec)
+void sort_algorithms(int *vet, int tam, int i, char *nome)
 {
     puts("");
     puts("");
@@ -220,11 +250,11 @@ void sort_algorithms(int *vet, int tam, int i, char *nome, clock_t *tempo_exec)
         int trocas = 0;
         alg = 1;
         fill_array(vet,tam,i);                      // Preenche o vetor em Ordem Crescente ou Decrescente ou Aleatória
-        *tempo_exec = clock();
+        getRuntime(false);
         insertion_sort(vet,tam,&trocas);            // Chama a função de Ordenação *InsertionSort*;
-        *tempo_exec = clock() - *tempo_exec;
+        getRuntime(true);
         
-        show(vet,tam,i,nome,alg,trocas,tempo_exec);
+        show(vet,tam,i,nome,alg,trocas);
         puts("");
 
     puts("");
@@ -236,11 +266,10 @@ void sort_algorithms(int *vet, int tam, int i, char *nome, clock_t *tempo_exec)
         trocas = 0;
         alg = 2;
         fill_array(vet,tam,i);                      // Preenche o vetor em Ordem Crescente ou Decrescente ou Aleatória
-        *tempo_exec = clock();
+        getRuntime(false);
         selection_sort(vet,tam,&trocas);            // Chama a função de Ordenação *SelectionSort*;
-        *tempo_exec = clock() - *tempo_exec;
-            
-        show(vet,tam,i,nome,alg,trocas,tempo_exec);
+        getRuntime(true);     
+        show(vet,tam,i,nome,alg,trocas);
         puts("");
     
     puts("");
@@ -252,11 +281,11 @@ void sort_algorithms(int *vet, int tam, int i, char *nome, clock_t *tempo_exec)
         trocas = 0;
         alg = 3;
         fill_array(vet,tam,i);                      // Preenche o vetor em Ordem Crescente ou Decrescente ou Aleatória
-        *tempo_exec = clock();
+        getRuntime(false);
         bubble_sort(vet,tam,&trocas);               // Chama a função de Ordenação *BubbleSort*;
-        *tempo_exec = clock() - *tempo_exec;
+        getRuntime(true);
         
-        show(vet,tam,i,nome,alg,trocas,tempo_exec);
+        show(vet,tam,i,nome,alg,trocas);
            
     
     puts("");
@@ -269,11 +298,11 @@ void sort_algorithms(int *vet, int tam, int i, char *nome, clock_t *tempo_exec)
         trocas = 0;
         alg = 4;
         fill_array(vet,tam,i);                      // Preenche o vetor em Ordem Crescente ou Decrescente ou Aleatória
-        *tempo_exec = clock();
+        getRuntime(false);
         merge_sort(0,tam,vet,aux,&trocas);          // Chama a função de Ordenação *MergeSort*;
-        *tempo_exec = clock() - *tempo_exec;
+        getRuntime(true);
         
-        show(vet,tam,i,nome,alg,trocas,tempo_exec);
+        show(vet,tam,i,nome,alg,trocas);
          
     
     puts("");
